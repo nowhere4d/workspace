@@ -1,0 +1,163 @@
+<div class="container"
+	style="margin-left: 0px; margin-right: 0px; width: auto; height: auto;">
+	<div class="row" style="height: 700px;">
+		<div class="col-md-12" style="height: 10px"></div>
+		<div class="col-md-12">
+			<div class="btn-group">
+				<a
+					ng-class="{'btn':true, 'btn-default':!isRunningLayout, 'btn-info':isRunningLayout}"
+					ng-click="runLayout()"><i
+					ng-class="{'fa':true, 'fa-play':!isRunningLayout, 'fa-spinner':isRunningLayout, 'fa-pulse':isRunningLayout}"></i></a>
+			</div>
+		</div>
+		<div class="col-md-12" style="height: 10px"></div>
+		<div class="col-md-8" style="height: 700px;">
+			<svg id="svg_graphmap"
+				ng-style="{background:'#eeeeee',cursor:dragNode?'move':drag?'crosshair':'default'}"
+				width="100%" height="100%" ng-mousedown="svgMouseDown($event)"
+				ng-mousemove="svgMouseMove($event)" ng-mouseup="svgMouseUp($event)">
+		
+		      <!-- Node Images -->
+		      <filter ng-repeat="nodeImage in nodeImages"
+					ng-attr-id="svgNodeImageId{{$index}}" x="0%" y="0%" width="100%"
+					height="100%">
+		          <feImage xlink:href="" data-ng-href="{{nodeImage}}" />
+		      </filter>
+
+		      <!-- Links-->
+		      <line ng-repeat="link in data.links" ng-attr-x1="{{link.x1}}"
+					ng-attr-y1="{{link.y1}}" ng-attr-x2="{{link.x2}}"
+					ng-attr-y2="{{link.y2}}"
+					ng-attr-stroke-width="{{link.strokeWidth}}"
+					ng-attr-stroke="{{link.stroke}}"
+					ng-attr-stroke-opacity="{{link.strokeOpacity}}"
+					ng-click="linkClick(link)" />
+		
+		      <!-- Nodes -->
+		      <ellipse ng-repeat="node in data.nodes"
+					ng-if="node.shape=='ellipse'" ng-attr-cx="{{node.x}}"
+					ng-attr-cy="{{node.y}}" ng-attr-rx="{{node.width/2.0}}"
+					ng-attr-ry="{{node.height/2.0}}"
+					ng-attr-filter="url(#svgNodeImageId{{node.imageid}})"
+					ng-attr-fill="{{node.fill}}"
+					ng-attr-fill-opacity="{{node.fillOpacity}}"
+					ng-attr-stroke-width="{{node.strokeWidth}}"
+					ng-attr-stroke="{{node.stroke}}"
+					ng-attr-stroke-opacity="{{node.strokeOpacity}}"
+					ng-mousedown="nodeMouseDown($event, node)"
+					ng-mousemove="nodeMouseMove($event)" ng-mouseup="nodeMouseUp()"
+					ng-dblclick="nodeDoubleClick(node)" />
+		      <text class="noselect" ng-repeat="node in data.nodes"
+					ng-if="node.shape=='ellipse'" style="pointer-events: none;"
+					ng-attr-x="{{node.x-node.width/2.0}}"
+					ng-attr-y="{{node.y+node.height}}"
+					ng-attr-font-size="{{node.labelSize}}"
+					ng-attr-fill="{{node.labelFill}}">
+		        {{node.label}}
+		      </text>
+		      <rect ng-repeat="node in data.nodes" ng-if="node.shape=='rect'"
+					ng-attr-x="{{node.x-node.width/2.0}}"
+					ng-attr-y="{{node.y-node.height/2.0}}"
+					ng-attr-width="{{node.width}}" ng-attr-height="{{node.height}}"
+					ng-attr-filter="url(#svgNodeImageId{{node.imageid}})"
+					ng-attr-fill="{{node.fill}}"
+					ng-attr-fill-opacity="{{node.fillOpacity}}"
+					ng-attr-stroke-width="{{node.strokeWidth}}"
+					ng-attr-stroke="{{node.stroke}}"
+					ng-attr-stroke-opacity="{{node.strokeOpacity}}"
+					ng-mousedown="nodeMouseDown($event, node)"
+					ng-mousemove="nodeMouseMove($event)" ng-mouseup="nodeMouseUp()"
+					ng-dblclick="nodeDoubleClick(node)" />
+		      <text class="noselect" ng-repeat="node in data.nodes"
+					ng-if="node.shape=='rect'" style="pointer-events: none;"
+					ng-attr-x="{{node.x-node.width/2.0}}"
+					ng-attr-y="{{node.y+node.height}}"
+					ng-attr-font-size="{{node.labelSize}}"
+					ng-attr-fill="{{node.labelFill}}">
+		        {{node.label}}
+		      </text>
+		
+		      <!-- Node Selected Points-->
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:nw-resize;"
+					ng-attr-x="{{node.x-node.width/2.0-7}}"
+					ng-attr-y="{{node.y-node.height/2.0-7}}"
+					ng-mousedown="resizeMouseDown($event, node, 'nw')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:n-resize;"
+					ng-attr-x="{{node.x-3}}" ng-attr-y="{{node.y-node.height/2.0-8}}"
+					ng-mousedown="resizeMouseDown($event, node, 'n')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:ne-resize;"
+					ng-attr-x="{{node.x+node.width/2.0+1}}"
+					ng-attr-y="{{node.y-node.height/2.0-7}}"
+					ng-mousedown="resizeMouseDown($event, node, 'ne')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:w-resize;"
+					ng-attr-x="{{node.x-node.width/2.0-8}}" ng-attr-y="{{node.y-3}}"
+					ng-mousedown="resizeMouseDown($event, node, 'w')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:e-resize;"
+					ng-attr-x="{{node.x+node.width/2.0+2}}" ng-attr-y="{{node.y-3}}"
+					ng-mousedown="resizeMouseDown($event, node, 'e')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:sw-resize;"
+					ng-attr-x="{{node.x-node.width/2.0-7}}"
+					ng-attr-y="{{node.y+node.height/2.0+1}}"
+					ng-mousedown="resizeMouseDown($event, node, 'sw')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:s-resize;"
+					ng-attr-x="{{node.x-3}}" ng-attr-y="{{node.y+node.height/2.0+2}}"
+					ng-mousedown="resizeMouseDown($event, node, 's')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		      <rect ng-repeat="node in data.nodes" ng-if="node.selected"
+					width="6" height="6" style="cursor:se-resize;"
+					ng-attr-x="{{node.x+node.width/2.0+1}}"
+					ng-attr-y="{{node.y+node.height/2.0+1}}"
+					ng-mousedown="resizeMouseDown($event, node, 'se')"
+					ng-mousemove="resizeMouseMove($event)" ng-mouseup="resizeMouseUp()" />
+		
+		        <!-- Dragging Selection Box -->
+		      <rect ng-if="drag" fill="blue" fill-opacity="0.1"
+					stroke-width="1" stroke="black" stroke-opacity="0.1"
+					ng-attr-x="{{dragX}}" ng-attr-y="{{dragY}}"
+					ng-attr-width="{{dragWidth}}" ng-attr-height="{{dragHeight}}" />
+		
+		    </svg>
+		</div>
+
+		<div class="col-md-4">
+			<div class="panel panel-default" style="height: 700px;">
+				<div class="panel-heading">Striped Rows</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Label</th>
+									<th>Width</th>
+									<th>Height</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="node in data.nodes" ng-if="node.selected">
+									<td>{{node.id}}</td>
+									<td>{{node.label}}</td>
+									<td>{{node.width}}</td>
+									<td>{{node.height}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

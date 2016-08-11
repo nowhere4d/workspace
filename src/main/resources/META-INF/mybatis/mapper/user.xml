@@ -1,0 +1,36 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nowhere4d.workspace.mapper.UserMapper">
+
+	<select id="selectList" resultType="nowhere4d.workspace.model.User">
+		SELECT * FROM users
+	</select>
+
+	<select id="selectOne" resultType="nowhere4d.workspace.model.User">
+		SELECT * FROM users WHERE id = ${value}
+	</select>
+
+	<select id="selectByUserName" resultType="nowhere4d.workspace.model.User">
+		SELECT * FROM users WHERE username = #{value}
+	</select>
+
+	<insert id="insertUser">
+		INSERT INTO users (username, address, email) VALUES (#{username}, #{address}, #{email})
+	</insert>
+
+	<update id="updateUser">
+		UPDATE users SET 
+		username = #{username}, 
+		address = #{address}, 
+		email = #{email} 
+		WHERE id = ${id}
+	</update>
+
+	<delete id="deleteByUserId">
+		DELETE FROM users WHERE id = ${value}
+	</delete>
+
+	<delete id="deleteAllUsers">
+		DELETE FROM users
+	</delete>
+
+</mapper>
