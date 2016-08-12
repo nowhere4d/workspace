@@ -1,5 +1,12 @@
+.class
+.jar
+.war
+
 .DS_Store
 .classpath
 .project
 .settings
 target
+
+.idea
+workspace.iml
